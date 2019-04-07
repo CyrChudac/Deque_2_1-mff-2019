@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,33 +32,25 @@ namespace Deque_2_1
 				set => arrays[begin + (Count - 1 - index) / Array<T>.Size][(Count - 1 - index) % Array<U>.Size] = value;
 			}
 
-			public override U GetFront() => ReallyGetBack(arrays, begin);
+			public override U GetFront() => ReallyGetBack(arrays, ref begin);
 
 			public override IDeque<U> GetReverseView() => new NormalView<U>(arrays, Count, end, begin);
 
 			public override void Add(U item) => AddBack(item);
 
-			public override void AddBack(U item) => ReallyAddFront(item, arrays, end);
+			public override void AddBack(U item) => ReallyAddFront(item, arrays, ref end, ref begin);
 
-			public override void AddFront(U item) => ReallyAddBack(item, arrays, begin);
+			public override void AddFront(U item) => ReallyAddBack(item, arrays, ref begin);
 
-			public override U GetBack() => ReallyGetFront(arrays, end);
+			public override U GetBack() => ReallyGetFront(arrays, ref end);
+
+			public override int IndexOf(U item) => ReallyIndexOf(item, arrays, end, begin);
+
 			/*					//
 			//		UNDONE		//
 			//					*/
 
 			public override void CopyTo(U[] array, int arrayIndex)
-			{
-				throw new NotImplementedException();
-			}
-
-
-			public override IEnumerator<U> GetEnumerator()
-			{
-				throw new NotImplementedException();
-			}
-
-			public override int IndexOf(U item)
 			{
 				throw new NotImplementedException();
 			}
@@ -76,6 +69,8 @@ namespace Deque_2_1
 			{
 				throw new NotImplementedException();
 			}
+
+			
 		}
 	}
 }

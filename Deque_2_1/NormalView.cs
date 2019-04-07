@@ -40,15 +40,17 @@ namespace Deque_2_1
 				set => arrays[begin + index / Array<T>.Size][index % Array<U>.Size] = value;
 			}
 
-			public override void AddBack(U item) => ReallyAddBack(item, arrays, end);
+			public override void AddBack(U item) => ReallyAddBack(item, arrays, ref end);
 
-			public override U GetBack() => ReallyGetBack(arrays, end);
+			public override U GetBack() => ReallyGetBack(arrays, ref end);
 
-			public override void AddFront(U item) => ReallyAddFront(item, arrays, begin);
+			public override void AddFront(U item) => ReallyAddFront(item, arrays, ref begin, ref end);
 
-			public override U GetFront() => ReallyGetFront(arrays, begin);
+			public override U GetFront() => ReallyGetFront(arrays, ref begin);
 
 			public override IDeque<U> GetReverseView() => new InvertedView<U>(arrays, Count, end, begin);
+
+			public override int IndexOf(U item) => ReallyIndexOf(item, arrays, begin, end);
 
 			/*					//
 			//		UNDONE		//
@@ -60,16 +62,6 @@ namespace Deque_2_1
 				throw new NotImplementedException();
 			}
 
-			public override IEnumerator<U> GetEnumerator()
-			{
-				throw new NotImplementedException();
-			}
-
-			public override int IndexOf(U item)
-			{
-				throw new NotImplementedException();
-			}
-
 			public override void Insert(int index, U item)
 			{
 				throw new NotImplementedException();
@@ -77,7 +69,40 @@ namespace Deque_2_1
 
 			public override bool Remove(U item)
 			{
-				throw new NotImplementedException();
+				int i1 = -1;
+				int j1 = -1;
+				for (int i = begin; i <= end; i++)
+					for (int j = arrays[i].Begin; j < arrays[i].End; j++)
+						if (arrays[i][j].Equals(item))
+						{
+							i1 = i;
+							j1 = j;
+							break;
+						}
+				if (i1 == -1)
+					return false;
+				if(end - i1 < j1 - begin)
+				{
+					for (int j = j1; j < arrays[i1].End; j++)
+						arrays[i1][j] = arrays[i1][j + 1];
+					for (int i = i1 + 1; i <= end; i++) {
+						arrays[i - 1][arrays[i - 1].End] = arrays[i][arrays[i].Begin];
+						for (int j = arrays[i].Begin; j < arrays[i].End; j++)
+							arrays[i][j] = arrays[i][j + 1];
+					}
+				}
+				else
+				{
+					for (int j = j1; j > arrays[i1].Begin; j--)
+						arrays[i1][j] = arrays[i1][j - 1];
+					for (int i = i1 - 1; i >= begin; i--)
+					{
+						arrays[i + 1][arrays[i + 1].Begin] = arrays[i][arrays[i].End];
+						for (int j = arrays[i].End; j > arrays[i].Begin; j--)
+							arrays[i][j] = arrays[i][j - 1];
+					}
+				}
+				return true;
 			}
 
 			public override void RemoveAt(int index)

@@ -43,42 +43,60 @@ namespace Deque_2_1
 		public bool Remove(T item) => view.Remove(item);
 		public IEnumerator<T> GetEnumerator() => view.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-		class Enumerator : IEnumerator<T>
-		{
-			public T Current => throw new NotImplementedException();
-
-			object IEnumerator.Current => Current;
-
-			public void Dispose()
-			{
-				throw new NotImplementedException();
-			}
-
-			public bool MoveNext()
-			{
-				throw new NotImplementedException();
-			}
-
-			public void Reset() => throw new Exception("Reset unsupported");
-
-			
-		}
-
-		
 	}
 
 	sealed class Array<T>
 	{
 		public static readonly int Size = 32;
-		public int Begin { get; private set; } = Size / 2;
-		public int End { get; private set; } = Size / 2;
+		public int MaxSize => Size;
+		public int Count { get; private set; } = 0;
+		public int Begin { get; private set; } = Size;
+		public int End { get; private set; } = -1;
 		public T[] list = new T[Size];
 		public bool Contains(T item) => list.Contains(item);
 		public T this[int i]
 		{
 			get => list[i];
 			set => list[i] = value;
+		}
+		public int IndexOf(T item)
+		{
+			for (int i = Begin; i < End; i++)
+				if (list[i].Equals(item))
+					return i - Begin;
+			return -1;
+		}
+		public void AddBack(T item)
+		{
+			if (End == -1)
+				Begin = 0;
+			End++;
+			list[End] = item;
+			Count++;
+		}
+		public T GetBack()
+		{
+			T result = list[End];
+			list[End] = default(T);
+			End--;
+			Count--;
+			return result;
+		}
+		public void AddFront(T item)
+		{
+			if (Begin == Size)
+				End = Size - 1;
+			Begin--;
+			list[Begin] = item;
+			Count++;
+		}
+		public T GetFront()
+		{
+			T result = list[Begin];
+			list[Begin] = default(T);
+			Begin++;
+			Count--;
+			return result;
 		}
 	}
 
