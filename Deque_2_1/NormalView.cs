@@ -64,51 +64,22 @@ namespace Deque_2_1
 
 			public override void Insert(int index, U item)
 			{
-				throw new NotImplementedException();
+				if (index > Count - index)
+                {
+                    AddBack(this[Count - 1]);
+                    for (int i = Count - 1; i > index; i--)
+                        this[i] = this[i-1];
+                }
+                else
+                {
+                    AddFront(this[0]);
+                    for (int i = 0; i < index; i++)
+                        this[i] = this[i + 1];
+                }
+                this[index]=item;
 			}
 
-			public override bool Remove(U item)
-			{
-				int i1 = -1;
-				int j1 = -1;
-				for (int i = begin; i <= end; i++)
-					for (int j = arrays[i].Begin; j < arrays[i].End; j++)
-						if (arrays[i][j].Equals(item))
-						{
-							i1 = i;
-							j1 = j;
-							break;
-						}
-				if (i1 == -1)
-					return false;
-				if(end - i1 < j1 - begin)
-				{
-					for (int j = j1; j < arrays[i1].End; j++)
-						arrays[i1][j] = arrays[i1][j + 1];
-					for (int i = i1 + 1; i <= end; i++) {
-						arrays[i - 1][arrays[i - 1].End] = arrays[i][arrays[i].Begin];
-						for (int j = arrays[i].Begin; j < arrays[i].End; j++)
-							arrays[i][j] = arrays[i][j + 1];
-					}
-				}
-				else
-				{
-					for (int j = j1; j > arrays[i1].Begin; j--)
-						arrays[i1][j] = arrays[i1][j - 1];
-					for (int i = i1 - 1; i >= begin; i--)
-					{
-						arrays[i + 1][arrays[i + 1].Begin] = arrays[i][arrays[i].End];
-						for (int j = arrays[i].End; j > arrays[i].Begin; j--)
-							arrays[i][j] = arrays[i][j - 1];
-					}
-				}
-				return true;
-			}
-
-			public override void RemoveAt(int index)
-			{
-				throw new NotImplementedException();
-			}
+			
 		}
 	}
 }

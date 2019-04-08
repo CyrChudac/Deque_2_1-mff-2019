@@ -58,19 +58,7 @@ namespace Deque_2_1
 			public override void Insert(int index, U item)
 			{
 				throw new NotImplementedException();
-			}
-
-			public override bool Remove(U item)
-			{
-				throw new NotImplementedException();
-			}
-
-			public override void RemoveAt(int index)
-			{
-				throw new NotImplementedException();
-			}
-
-			
+			}		
 		}
 	}
 }

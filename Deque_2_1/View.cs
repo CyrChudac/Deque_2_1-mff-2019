@@ -27,8 +27,34 @@ namespace Deque_2_1
 			public abstract IDeque<U> GetReverseView();
 			public abstract int IndexOf(U item);
 			public abstract void Insert(int index, U item);
-			public abstract bool Remove(U item);
-			public abstract void RemoveAt(int index);
+
+
+			public bool Remove(U item)
+			{
+				for (int i = 0;  i < Count; i++)
+						if (this[i].Equals(item))
+                        {
+                            RemoveAt(i);
+                            return true;
+                        }
+				return false;
+			}
+
+			public void RemoveAt(int index)
+			{
+				if(index > Count - index)
+				{
+					for (int i = index; i < Count - 1; i++)
+                        this[i]=this[i+1];
+                    GetBack();
+				}
+				else
+				{
+					for (int i = index; i > 0; i--)
+                        this[i]=this[i-1];
+                    GetFront();
+				}
+			}
 
 			public IEnumerator<U> GetEnumerator() => new Enumerator<U>(this);
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
