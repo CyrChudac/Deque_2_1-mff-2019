@@ -5,169 +5,261 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Deque_2_1
+public partial class Deque<T> : IDeque<T>
 {
-	public partial class Deque<T> : IDeque<T>
+	abstract class View<U> : IDeque<U>
 	{
-		abstract class View<U> : IDeque<U>
+		protected Array<U>[] arrays;
+		protected int begin, end;
+
+		public abstract U this[int index] { get; set; }
+
+		public int Count { get; protected set; } = 0;
+		public bool IsReadOnly => false;
+
+		public abstract void Add(U item);
+		public abstract void AddBack(U item);
+		public abstract void AddFront(U item);
+		public abstract U GetBack();
+		public abstract void Clear();
+		public abstract bool Contains(U item);
+		public abstract U GetFront();
+		public abstract IDeque<U> GetReverseView();
+		public abstract int IndexOf(U item);
+
+
+		public void CopyTo(U[] array, int arrayIndex)
 		{
-			public abstract U this[int index] { get; set; }
+			if (arrayIndex < 0)
+				throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+			if (array.Length - arrayIndex < Count)
+				throw new ArgumentException("Not enough space between given index and destination array end.");
+			for (int i = 0; i < Count; i++)
+				array[arrayIndex + i] = this[i];
+		}
 
-			public int Count { get; protected set; } = 0;
-			public bool IsReadOnly => false;
-
-			public abstract void Add(U item);
-			public abstract void AddBack(U item);
-			public abstract void AddFront(U item);
-			public abstract U GetBack();
-			public abstract void Clear();
-			public abstract bool Contains(U item);
-			public abstract void CopyTo(U[] array, int arrayIndex);
-			public abstract U GetFront();
-			public abstract IDeque<U> GetReverseView();
-			public abstract int IndexOf(U item);
-			public abstract void Insert(int index, U item);
-
-
-			public bool Remove(U item)
+		public void Insert(int index, U item)
+		{
+			if (index > Count - index)
 			{
-				for (int i = 0;  i < Count; i++)
-						if (this[i].Equals(item))
-                        {
-                            RemoveAt(i);
-                            return true;
-                        }
-				return false;
+				AddBack(this[Count - 1]);
+				for (int i = Count - 1; i > index; i--)
+					this[i] = this[i - 1];
 			}
-
-			public void RemoveAt(int index)
+			else
 			{
-				if(index > Count - index)
+				AddFront(this[0]);
+				for (int i = 0; i < index; i++)
+					this[i] = this[i + 1];
+			}
+			this[index] = item;
+		}
+
+		public bool Remove(U item)
+		{
+			for (int i = 0;  i < Count; i++)
+					if (this[i].Equals(item))
+                    {
+                        RemoveAt(i);
+                        return true;
+                    }
+			return false;
+		}
+
+		public void RemoveAt(int index)
+		{
+			if(index > Count - index)
+			{
+				for (int i = index; i < Count - 1; i++)
+                    this[i]=this[i+1];
+                GetBack();
+			}
+			else
+			{
+				for (int i = index; i > 0; i--)
+                    this[i]=this[i-1];
+                GetFront();
+			}
+		}
+
+		public IEnumerator<U> GetEnumerator() => new Enumerator<U>(this);
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+
+		protected void ReallyClear()
+		{
+			for (int i = begin; i < end; i++)
+				arrays[i] = new Array<U>();
+			Count = 0;
+		}
+
+		protected bool ReallyContains(U item)
+		{
+			for (int i = begin; i < end; i++)
+				if (arrays[i].Contains(item))
+					return true;
+			return false;
+		}
+
+		protected int ReallyIndexOf(U item)
+		{
+			int result = 0;
+			for (int i = begin; i < end; i++)
+			{
+				int currIndex = arrays[i].IndexOf(item);
+				if (currIndex > 0)
+					return result + currIndex;
+				result += Array<U>.Size - 1;
+			}
+			return -1;
+		}
+
+		protected void ReallyAddBack(U item)
+		{
+			if(arrays[end].Count == Array<U>.Size)
+			{
+				if(end == arrays.Length - 1)
 				{
-					for (int i = index; i < Count - 1; i++)
-                        this[i]=this[i+1];
-                    GetBack();
+					Array<U>[] newArrays = Array<U>.GetArrayOfArrays(arrays.Length * 2);
+					arrays.CopyTo(newArrays, 0);
+					arrays = newArrays;
 				}
-				else
+				end++;
+			}
+			Count++;
+			arrays[end].AddBack(item);
+		}
+
+		protected U ReallyGetBack()
+		{
+			if (arrays[end].Count == 0)
+				end--;
+			Count--;
+			return arrays[end].GetBack();
+		}
+
+		protected U ReallyGetFront()
+		{
+			if (arrays[begin].Count == 0)
+				begin++;
+			Count--;
+			return arrays[begin].GetBack();
+		}
+
+		protected void ReallyAddFront(U item)
+		{
+			if (arrays[begin].Count == Array<U>.Size)
+			{
+				if (begin == 0)
 				{
-					for (int i = index; i > 0; i--)
-                        this[i]=this[i-1];
-                    GetFront();
+					Array<U>[] newArrays = Array<U>.GetArrayOfArrays(arrays.Length * 2);
+					arrays.CopyTo(newArrays, arrays.Length);
+					begin += arrays.Length;
+					end += arrays.Length;
+					arrays = newArrays;
 				}
+				begin--;
+			}
+			Count++;
+			arrays[begin].AddFront(item);
+		}
+
+		class Enumerator<V> : IEnumerator<V>
+		{
+			int index = -1;
+			readonly int count;
+			View<V> view;
+
+			public Enumerator(View<V> view)
+			{
+				this.view = view;
+				count = view.Count;
 			}
 
-			public IEnumerator<U> GetEnumerator() => new Enumerator<U>(this);
-			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-
-			protected void ReallyClear(Array<U>[] arrays, int begin, int end)
-			{
-				for (int i = begin; i < end; i++)
-					arrays[i] = new Array<U>();
-				Count = 0;
-			}
-
-			protected bool ReallyContains(U item, Array<U>[] arrays, int begin, int end)
-			{
-				for (int i = begin; i < end; i++)
-					if (arrays[i].Contains(item))
-						return true;
-				return false;
-			}
-
-			protected int ReallyIndexOf(U item, Array<U>[] arrays, int begin, int end)
-			{
-				int result = 0;
-				for (int i = begin; i < end; i++)
+			public V Current {
+				get
 				{
-					int currIndex = arrays[i].IndexOf(item);
-					if (currIndex > 0)
-						return result + currIndex;
-					result += Array<U>.Size - 1;
+					if (index < 0 || index > view.Count - 1)
+						throw new InvalidOperationException("You did not use MoveNext yet or you are already at the collection end.");
+					return view[index];
 				}
+			}
+
+			object IEnumerator.Current => Current;
+
+			public bool MoveNext()
+			{
+				index++;
+				if (count != view.Count)
+					throw new InvalidOperationException();
+				return index < view.Count;
+			}
+			public void Reset() => index = -1;
+			public void Dispose() { }
+		}
+
+		public sealed class Array<V>
+		{
+			public static readonly int Size = 32;
+			public int MaxSize => Size;
+			public int Count { get; private set; } = 0;
+			public int Begin { get; private set; } = Size;
+			public int End { get; private set; } = -1;
+			public V[] list = new V[Size];
+			public bool Contains(V item) => list.Contains(item);
+			public V this[int i]
+			{
+				get => list[i];
+				set => list[i] = value;
+			}
+			public int IndexOf(V item)
+			{
+				for (int i = Begin; i <= End; i++)
+					if (list[i].Equals(item))
+						return i - Begin;
 				return -1;
 			}
-
-			protected void ReallyAddBack(U item, Array<U>[] arrays, ref int end)
+			public void AddBack(V item)
 			{
-				if(arrays[end].Count == Array<U>.Size)
-				{
-					if(end == arrays.Count())
-					{
-						Array<U>[] newArrays = new Array<U>[arrays.Count() * 2];
-						arrays.CopyTo(newArrays, 0);
-						arrays = newArrays;
-					}
-					end++;
-				}
+				if (End == -1)
+					Begin = 0;
+				End++;
+				list[End] = item;
 				Count++;
-				arrays[end].AddBack(item);
 			}
-
-			protected U ReallyGetBack(Array<U>[] arrays, ref int end)
+			public V GetBack()
 			{
-				if (arrays[end].Count == 0)
-					end--;
+				V result = list[End];
+				list[End] = default(V);
+				End--;
 				Count--;
-				return arrays[end].GetBack();
+				return result;
 			}
-
-			protected U ReallyGetFront(Array<U>[] arrays, ref int begin)
+			public void AddFront(V item)
 			{
-				if (arrays[begin].Count == 0)
-					begin++;
-				Count--;
-				return arrays[begin].GetBack();
-			}
-
-			protected void ReallyAddFront(U item, Array<U>[] arrays, ref int begin, ref int end)
-			{
-				if (arrays[begin].Count == Array<U>.Size)
-				{
-					if (begin == 0)
-					{
-						Array<U>[] newArrays = new Array<U>[arrays.Count() * 2];
-						arrays.CopyTo(newArrays, arrays.Count());
-						begin += arrays.Count();
-						end += arrays.Count();
-						arrays = newArrays;
-					}
-					begin--;
-				}
+				if (Begin == Size)
+					End = Size - 1;
+				Begin--;
+				list[Begin] = item;
 				Count++;
-				arrays[begin].AddFront(item);
 			}
-
-			class Enumerator<V> : IEnumerator<V>
+			public V GetFront()
 			{
-				int index = 0;
-				int count;
-				View<V> view;
-
-				public Enumerator(View<V> view)
-				{
-					this.view = view;
-					count = view.Count;
-				}
-
-				public V Current => view[index];
-
-				object IEnumerator.Current => Current;
-
-				public bool MoveNext()
-				{
-					index++;
-					if (count != view.Count)
-						throw new InvalidOperationException();
-					return index < view.Count;
-				}
-				public void Reset() => index = 0;
-				public void Dispose() { }
+				V result = list[Begin];
+				list[Begin] = default(V);
+				Begin++;
+				Count--;
+				return result;
 			}
-
-			/*					//
-			//		UNDONE		//
-			//					*/
+			public static Array<V>[] GetArrayOfArrays(int capacity)
+			{
+				Array<V>[] result = new Array<V>[capacity];
+				for (int i = 0; i < capacity; i++)
+					result[i] = new Array<V>();
+				return result;
+			}
 		}
+
 	}
 }
+
