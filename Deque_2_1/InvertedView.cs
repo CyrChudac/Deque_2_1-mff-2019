@@ -23,23 +23,44 @@ public partial class Deque<T> : IDeque<T>
 
 		public override U this[int index]
 		{
-			get => arrays[begin + (Count - 1 - index) / Array<T>.Size][(Count - 1 - index) % Array<U>.Size];
-			set => arrays[begin + (Count - 1 - index) / Array<T>.Size][(Count - 1 - index) % Array<U>.Size] = value;
+			get
+			{
+				if (index < 0)
+					throw new IndexOutOfRangeException();
+				int count = 0;
+				for (int i = begin; i >= end; i--)
+					if (index < count + arrays[i].Count)
+						return arrays[i][arrays[i].Count - (index - count)];
+					else
+						count += arrays[i].Count;
+				throw new IndexOutOfRangeException();
+			}
+			set
+			{
+				if (index < 0)
+					throw new IndexOutOfRangeException();
+				int count = 0;
+				for (int i = begin; i >= end; i--)
+					if (index < count + arrays[i].Count)
+					{
+						arrays[i][arrays[i].Count - (index - count)] = value;
+						return;
+					}
+					else
+						count += arrays[i].Count;
+				throw new IndexOutOfRangeException();
+			}
 		}
 
 		public override U GetFront() => ReallyGetBack();
 
 		public override IDeque<U> GetReverseView() => new NormalView<U>(arrays, Count, end, begin);
 
-		public override void Add(U item) => AddBack(item);
-
 		public override void AddBack(U item) => ReallyAddFront(item);
 
 		public override void AddFront(U item) => ReallyAddBack(item);
 
 		public override U GetBack() => ReallyGetFront();
-
-		public override int IndexOf(U item) => ReallyIndexOf(item);
 	}
 }
 

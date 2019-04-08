@@ -28,12 +28,35 @@ public partial class Deque<T> : IDeque<T>
 
 		public override bool Contains(U item) => ReallyContains(item);
 
-		public override void Add(U item) => AddBack(item);
-
 		public override U this[int index]
 		{
-			get => arrays[begin + index / Array<T>.Size][index % Array<U>.Size];
-			set => arrays[begin + index / Array<T>.Size][index % Array<U>.Size] = value;
+			get
+			{
+				if (index < 0)
+					throw new IndexOutOfRangeException();
+				int count = 0;
+				for (int i = begin; i <= end; i++)
+					if (index < count + arrays[i].Count)
+						return arrays[i][index - count];
+					else
+						count += arrays[i].Count;
+				throw new IndexOutOfRangeException();
+			}
+			set
+			{
+				if (index < 0)
+					throw new IndexOutOfRangeException();
+				int count = 0;
+				for (int i = begin; i <= end; i++)
+					if (index < count + arrays[i].Count)
+					{
+						arrays[i][index - count] = value;
+						return;
+					}
+					else
+						count += arrays[i].Count;
+				throw new IndexOutOfRangeException();
+			}
 		}
 
 		public override void AddBack(U item) => ReallyAddBack(item);
@@ -45,8 +68,6 @@ public partial class Deque<T> : IDeque<T>
 		public override U GetFront() => ReallyGetFront();
 
 		public override IDeque<U> GetReverseView() => new InvertedView<U>(arrays, Count, end, begin);
-
-		public override int IndexOf(U item) => ReallyIndexOf(item);
 	}
 }
 

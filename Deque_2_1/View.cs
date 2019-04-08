@@ -17,7 +17,7 @@ public partial class Deque<T> : IDeque<T>
 		public int Count { get; protected set; } = 0;
 		public bool IsReadOnly => false;
 
-		public abstract void Add(U item);
+		public void Add(U item) => AddBack(item);
 		public abstract void AddBack(U item);
 		public abstract void AddFront(U item);
 		public abstract U GetBack();
@@ -25,7 +25,6 @@ public partial class Deque<T> : IDeque<T>
 		public abstract bool Contains(U item);
 		public abstract U GetFront();
 		public abstract IDeque<U> GetReverseView();
-		public abstract int IndexOf(U item);
 
 
 		public void CopyTo(U[] array, int arrayIndex)
@@ -71,7 +70,7 @@ public partial class Deque<T> : IDeque<T>
 			if(index > Count - index)
 			{
 				for (int i = index; i < Count - 1; i++)
-                    this[i]=this[i+1];
+                    this[i] = this[i + 1];
                 GetBack();
 			}
 			else
@@ -101,13 +100,13 @@ public partial class Deque<T> : IDeque<T>
 			return false;
 		}
 
-		protected int ReallyIndexOf(U item)
+		public int IndexOf(U item)
 		{
 			int result = 0;
-			for (int i = begin; i < end; i++)
+			for (int i = begin; i <= end; i++)
 			{
 				int currIndex = arrays[i].IndexOf(item);
-				if (currIndex > 0)
+				if (currIndex >= 0)
 					return result + currIndex;
 				result += Array<U>.Size - 1;
 			}
@@ -143,7 +142,7 @@ public partial class Deque<T> : IDeque<T>
 			if (arrays[begin].Count == 0)
 				begin++;
 			Count--;
-			return arrays[begin].GetBack();
+			return arrays[begin].GetFront();
 		}
 
 		protected void ReallyAddFront(U item)
@@ -209,8 +208,8 @@ public partial class Deque<T> : IDeque<T>
 			public bool Contains(V item) => list.Contains(item);
 			public V this[int i]
 			{
-				get => list[i];
-				set => list[i] = value;
+				get => list[Begin + i];
+				set => list[Begin + i] = value;
 			}
 			public int IndexOf(V item)
 			{
