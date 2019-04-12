@@ -9,12 +9,12 @@ public partial class Deque<T> : IDeque<T>
 {
 	class InvertedView<U> : View<U>
 	{
-		internal InvertedView(Array<U>[] arrays, int count, int begin, int end)
+		internal InvertedView(Array<U>[] arrays, int count, int end, int begin)
 		{
 			this.arrays = arrays;
 			this.Count = count;
-			this.begin = begin;
-			this.end = end;
+			this.end = begin;
+			this.begin = end;
 		}
 
 		public override void Clear() => ReallyClear();
@@ -28,7 +28,7 @@ public partial class Deque<T> : IDeque<T>
 				if (index < 0)
 					throw new IndexOutOfRangeException();
 				int count = 0;
-				for (int i = begin; i >= end; i--)
+				for (int i = end; i >= begin; i--)
 					if (index < count + arrays[i].Count)
 						return arrays[i][arrays[i].Count - (index - count)];
 					else
@@ -40,7 +40,7 @@ public partial class Deque<T> : IDeque<T>
 				if (index < 0)
 					throw new IndexOutOfRangeException();
 				int count = 0;
-				for (int i = begin; i >= end; i--)
+				for (int i = end; i >= begin; i--)
 					if (index < count + arrays[i].Count)
 					{
 						arrays[i][arrays[i].Count - (index - count)] = value;
@@ -54,7 +54,7 @@ public partial class Deque<T> : IDeque<T>
 
 		public override U GetFront() => ReallyGetBack();
 
-		public override IDeque<U> GetReverseView() => new NormalView<U>(arrays, Count, end, begin);
+		public override IDeque<U> GetReverseView() => new NormalView<U>(arrays, Count, begin, end);
 
 		public override void AddBack(U item) => ReallyAddFront(item);
 
