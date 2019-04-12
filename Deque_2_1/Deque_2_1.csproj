@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Deque.cs" />
-    <Compile Include="FakeDeque.cs" />
     <Compile Include="InvertedView.cs" />
     <Compile Include="NormalView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
