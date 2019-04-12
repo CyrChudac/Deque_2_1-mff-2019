@@ -19,6 +19,9 @@ public partial class Deque<T> : IDeque<T>
 
 		public override U this[int index]
 		{
+			get => ReallyIndexerGet(Count - index);
+			set => ReallyIndexerSet(Count - index, value);
+			/*
 			get
 			{
 				if (index < 0)
@@ -45,7 +48,7 @@ public partial class Deque<T> : IDeque<T>
 					else
 						count += arrays[i].Count;
 				throw new IndexOutOfRangeException();
-			}
+			} */
 		}
 
         public override int IndexOf(U item)

@@ -92,6 +92,17 @@ public partial class Deque<T> : IDeque<T>
 			return false;
 		}
 
+
+		protected U ReallyIndexerGet(int index)
+		{
+			return arrays[((index - arrays[begin].Count) / Array<U>.Size) + 1]
+				[(index - arrays[begin].Count) % Array<U>.Size];
+		}
+		protected void ReallyIndexerSet(int index, U item)
+		{
+			arrays[((index - arrays[begin].Count) / Array<U>.Size) + 1]
+				[(index - arrays[begin].Count) % Array<U>.Size] = item;
+		}
 		protected void ReallyAddBack(U item)
 		{
 			if(arrays[end].Count == Array<U>.Size)
@@ -234,30 +245,30 @@ public partial class Deque<T> : IDeque<T>
             public int Length => map.Length;
             public Map(int capacity)
             {
-                map = new Array<V>[capacity];
+                map = GetNewMap(capacity);
             }
 
-            public static Map<V> GetMapOfGivenLength(int capacity)
-            {
-                Map<V> result = new Map<V>(capacity);
-                for (int i = 0; i < capacity; i++)
-                    result[i] = new Array<V>();
-                return result;
-            }
-            public Array<V> this[int index] {
+			static Array<V>[] GetNewMap(int capacity)
+			{
+				Array<V>[] result = new Array<V>[capacity];
+				for (int i = 0; i < capacity; i++)
+					result[i] = new Array<V>();
+				return result;
+			}
+			public Array<V> this[int index] {
                 get => map[index];
                 set => map[index] = value;
             }
 
             public void IncreaseBack()
             {
-                Array<V>[] newMap = new Array<V>[map.Length * 2];
+                Array<V>[] newMap = GetNewMap(map.Length * 2);
                 map.CopyTo(newMap, 0);
                 map = newMap;
             }
             public void IncreaseFront()
             {
-                Array<V>[] newMap = new Array<V>[map.Length * 2];
+                Array<V>[] newMap = GetNewMap(map.Length * 2);
                 map.CopyTo(newMap, map.Length);
                 map = newMap;
             }

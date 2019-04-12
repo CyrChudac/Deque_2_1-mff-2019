@@ -11,7 +11,7 @@ public partial class Deque<T> : IDeque<T>
 		public NormalView(int capacity)
 		{
 			int count = capacity / Array<U>.Size + 1;
-			arrays = Map<U>.GetMapOfGivenLength(count);
+			arrays = new Map<U>(count);
 			begin = arrays.Length/2;
 			end = arrays.Length/2;
 		}
@@ -39,33 +39,44 @@ public partial class Deque<T> : IDeque<T>
 
         public override U this[int index]
 		{
+			get => ReallyIndexerGet(index);
+			set => ReallyIndexerSet(index, value);
+			/* Another attempt
 			get
 			{
 				if (index < 0)
 					throw new IndexOutOfRangeException();
-				int count = 0;
-				for (int i = begin; i <= end; i++)
-					if (index < count + arrays[i].Count)
-						return arrays[i][index - count];
-					else
-						count += arrays[i].Count;
-				throw new IndexOutOfRangeException();
+
+				return arrays[((index - arrays[begin].Count) / Array<U>.Size) + 1]
+					[(index - arrays[begin].Count) % Array<U>.Size];
+
+				//int count = 0;
+				//for (int i = begin; i <= end; i++)
+				//	if (index < count + arrays[i].Count)
+				//		return arrays[i][index - count];
+				//	else
+				//		count += arrays[i].Count;
 			}
 			set
 			{
 				if (index < 0)
 					throw new IndexOutOfRangeException();
-				int count = 0;
-				for (int i = begin; i <= end; i++)
-					if (index < count + arrays[i].Count)
-					{
-						arrays[i][index - count] = value;
-						return;
-					}
-					else
-						count += arrays[i].Count;
-				throw new IndexOutOfRangeException();
-			}
+
+				arrays[((index - arrays[begin].Count) / Array<U>.Size) + 1]
+					[(index - arrays[begin].Count) % Array<U>.Size] = value;
+				//if (index < 0)
+				//	throw new IndexOutOfRangeException();
+				//int count = 0;
+				//for (int i = begin; i <= end; i++)
+				//	if (index < count + arrays[i].Count)
+				//	{
+				//		arrays[i][index - count] = value;
+				//		return;
+				//	}
+				//	else
+				//		count += arrays[i].Count;
+				//throw new IndexOutOfRangeException();
+			} */
 		}
 
 		public override void AddBack(U item) => ReallyAddBack(item);

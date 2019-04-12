@@ -9,7 +9,7 @@ namespace UnitTests1
 		readonly static Random Random = new Random(implicitLength);
 		static int rint => Random.Next();
 		readonly static int implicitLength = 40; // <-----must always be less then (4)sqrt(int.MaxValue)
-		IDeque<int> deq = new Deque<int>();
+		IDeque<int> deq = new Deque<int>().GetReverseView();
 		IDeque<int> fake = new FakeDeque<int>();
 
 		[TestMethod]
@@ -83,7 +83,8 @@ namespace UnitTests1
 				deq.Add(a);
 			}
 			deq.Insert(index, number);
-			Assert.AreEqual(deq[index], number); // <--------- Also depends on indexer
+			fake.Insert(index, number);
+			Assert.AreEqual(fake[index], deq[index]); // <--------- Also depends on indexer
 			string expected = "";
 			string actual = "";
 			for (int i = 0; i < deqLength + 1; i++)
@@ -107,7 +108,6 @@ namespace UnitTests1
 		public void Insert0___()
 		{
 			Insert(0, 0, implicitLength);
-
 		}
 		public void Remove(int index, int deqLenght, int item = 669)
 		{
@@ -130,7 +130,10 @@ namespace UnitTests1
 			deq.Remove(item);
 			string actual = "";
 			for (int i = 0; i < deqLenght - 1; i++)
+			{
+				expected += fake[i];
 				actual += deq[i];
+			}
 			Assert.AreEqual(expected, actual);
 		}
 		[TestMethod]
@@ -176,7 +179,7 @@ namespace UnitTests1
 		[TestMethod]
 		public void RemoveAtGeneral()
 		{
-			RemoveAt(rint);
+			RemoveAt( rint % implicitLength);
 		}
 		[TestMethod]
 		public void Count_VS()
@@ -188,7 +191,7 @@ namespace UnitTests1
 				deq.Add(a);
 			}
 			Assert.AreEqual(fake.Count, deq.Count);
-			for (int i = 0; i < implicitLength * implicitLength * implicitLength; i += implicitLength)
+			for (int i = 0; i < implicitLength * implicitLength ; i++)
 			{
 				fake.RemoveAt(i);
 				deq.RemoveAt(i);
