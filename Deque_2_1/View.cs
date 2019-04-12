@@ -9,7 +9,7 @@ public partial class Deque<T> : IDeque<T>
 {
 	abstract class View<U> : IDeque<U>
 	{
-		protected Array<U>[] arrays;
+		protected Map<U> arrays;
 		protected int begin, end;
 
 		public abstract U this[int index] { get; set; }
@@ -21,10 +21,9 @@ public partial class Deque<T> : IDeque<T>
 		public abstract void AddBack(U item);
 		public abstract void AddFront(U item);
 		public abstract U GetBack();
-		public abstract void Clear();
-		public abstract bool Contains(U item);
 		public abstract U GetFront();
 		public abstract IDeque<U> GetReverseView();
+        public abstract int IndexOf(U item);
 
 
 		public void CopyTo(U[] array, int arrayIndex)
@@ -36,7 +35,6 @@ public partial class Deque<T> : IDeque<T>
 			for (int i = 0; i < Count; i++)
 				array[arrayIndex + i] = this[i];
 		}
-
 		public void Insert(int index, U item)
 		{
 			if (index > Count - index)
@@ -53,7 +51,6 @@ public partial class Deque<T> : IDeque<T>
 			}
 			this[index] = item;
 		}
-
 		public bool Remove(U item)
 		{
 			for (int i = 0;  i < Count; i++)
@@ -64,7 +61,6 @@ public partial class Deque<T> : IDeque<T>
                     }
 			return false;
 		}
-
 		public void RemoveAt(int index)
 		{
 			if(index > Count - index)
@@ -80,37 +76,20 @@ public partial class Deque<T> : IDeque<T>
                 GetFront();
 			}
 		}
-
 		public IEnumerator<U> GetEnumerator() => new Enumerator<U>(this);
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-
-		protected void ReallyClear()
+		public void Clear()
 		{
 			for (int i = begin; i < end; i++)
 				arrays[i] = new Array<U>();
 			Count = 0;
 		}
-
-		protected bool ReallyContains(U item)
+		public bool Contains(U item)
 		{
 			for (int i = begin; i < end; i++)
 				if (arrays[i].Contains(item))
 					return true;
 			return false;
-		}
-
-		public int IndexOf(U item)
-		{
-			int result = 0;
-			for (int i = begin; i <= end; i++)
-			{
-				int currIndex = arrays[i].IndexOf(item);
-				if (currIndex >= 0)
-					return result + currIndex;
-				result += Array<U>.Size - 1;
-			}
-			return -1;
 		}
 
 		protected void ReallyAddBack(U item)
@@ -119,9 +98,7 @@ public partial class Deque<T> : IDeque<T>
 			{
 				if(end == arrays.Length - 1)
 				{
-					Array<U>[] newArrays = Array<U>.GetArrayOfArrays(arrays.Length * 2);
-					arrays.CopyTo(newArrays, 0);
-					arrays = newArrays;
+                    arrays.IncreaseBack();
 				}
 				end++;
 			}
@@ -151,11 +128,9 @@ public partial class Deque<T> : IDeque<T>
 			{
 				if (begin == 0)
 				{
-					Array<U>[] newArrays = Array<U>.GetArrayOfArrays(arrays.Length * 2);
-					arrays.CopyTo(newArrays, arrays.Length);
-					begin += arrays.Length;
-					end += arrays.Length;
-					arrays = newArrays;
+                    begin += arrays.Length;
+                    end += arrays.Length;
+                    arrays.IncreaseFront();
 				}
 				begin--;
 			}
@@ -250,15 +225,44 @@ public partial class Deque<T> : IDeque<T>
 				Count--;
 				return result;
 			}
-			public static Array<V>[] GetArrayOfArrays(int capacity)
-			{
-				Array<V>[] result = new Array<V>[capacity];
-				for (int i = 0; i < capacity; i++)
-					result[i] = new Array<V>();
-				return result;
-			}
 		}
 
-	}
+        public class Map<V>
+        {
+            Array<V>[] map;
+
+            public int Length => map.Length;
+            public Map(int capacity)
+            {
+                map = new Array<V>[capacity];
+            }
+
+            public static Map<V> GetMapOfGivenLength(int capacity)
+            {
+                Map<V> result = new Map<V>(capacity);
+                for (int i = 0; i < capacity; i++)
+                    result[i] = new Array<V>();
+                return result;
+            }
+            public Array<V> this[int index] {
+                get => map[index];
+                set => map[index] = value;
+            }
+
+            public void IncreaseBack()
+            {
+                Array<V>[] newMap = new Array<V>[map.Length * 2];
+                map.CopyTo(newMap, 0);
+                map = newMap;
+            }
+            public void IncreaseFront()
+            {
+                Array<V>[] newMap = new Array<V>[map.Length * 2];
+                map.CopyTo(newMap, map.Length);
+                map = newMap;
+            }
+        }
+
+    }
 }
 

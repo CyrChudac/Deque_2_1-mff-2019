@@ -43,6 +43,7 @@ public partial class Deque<T> : IDeque<T>
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
 
+
 public static class DequeTest
 {
 	public static IList<T> GetReverseView<T>(Deque<T> d) => d.GetReverseView();

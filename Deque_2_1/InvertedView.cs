@@ -9,17 +9,13 @@ public partial class Deque<T> : IDeque<T>
 {
 	class InvertedView<U> : View<U>
 	{
-		internal InvertedView(Array<U>[] arrays, int count, int end, int begin)
+		internal InvertedView(Map<U> arrays, int count, int end, int begin)
 		{
 			this.arrays = arrays;
 			this.Count = count;
 			this.end = begin;
 			this.begin = end;
 		}
-
-		public override void Clear() => ReallyClear();
-
-		public override bool Contains(U item) => ReallyContains(item);
 
 		public override U this[int index]
 		{
@@ -52,7 +48,12 @@ public partial class Deque<T> : IDeque<T>
 			}
 		}
 
-		public override U GetFront() => ReallyGetBack();
+        public override int IndexOf(U item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override U GetFront() => ReallyGetBack();
 
 		public override IDeque<U> GetReverseView() => new NormalView<U>(arrays, Count, begin, end);
 

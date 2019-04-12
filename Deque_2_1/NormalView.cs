@@ -11,12 +11,12 @@ public partial class Deque<T> : IDeque<T>
 		public NormalView(int capacity)
 		{
 			int count = capacity / Array<U>.Size + 1;
-			arrays = Array<U>.GetArrayOfArrays(count);
+			arrays = Map<U>.GetMapOfGivenLength(count);
 			begin = arrays.Length/2;
 			end = arrays.Length/2;
 		}
 
-		public NormalView(Array<U>[] arrays, int count, int begin, int end)
+		public NormalView(Map<U> arrays, int count, int begin, int end)
 		{
 			this.arrays = arrays;
 			this.Count = count;
@@ -24,11 +24,20 @@ public partial class Deque<T> : IDeque<T>
 			this.end = end;
 		}
 
-		public override void Clear() => ReallyClear();
+        public override int IndexOf(U item)
+        {
+            int result = 0;
+            for (int i = begin; i <= end; i++)
+            {
+                int currIndex = arrays[i].IndexOf(item);
+                if (currIndex >= 0)
+                    return result + currIndex;
+                result += Array<U>.Size - 1;
+            }
+            return -1;
+        }
 
-		public override bool Contains(U item) => ReallyContains(item);
-
-		public override U this[int index]
+        public override U this[int index]
 		{
 			get
 			{

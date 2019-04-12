@@ -9,7 +9,7 @@ namespace UnitTests1
 {
 	class FakeDeque<T> : IDeque<T>
 	{
-		List<T> list;
+		List<T> list = new List<T>();
 
 		public T this[int index] { get => list[index]; set => list[index] = value; }
 		public int Count => list.Count;

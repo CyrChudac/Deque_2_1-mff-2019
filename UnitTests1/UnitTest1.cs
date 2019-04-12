@@ -8,9 +8,10 @@ namespace UnitTests1
 	{
 		readonly static Random Random = new Random(implicitLength);
 		static int rint => Random.Next();
-		static int implicitLength = 40; // <-----must always be less then (4)sqrt(int.MaxValue)
+		readonly static int implicitLength = 40; // <-----must always be less then (4)sqrt(int.MaxValue)
 		IDeque<int> deq = new Deque<int>();
 		IDeque<int> fake = new FakeDeque<int>();
+
 		[TestMethod]
 		public void CapacityContructor()
 		{
