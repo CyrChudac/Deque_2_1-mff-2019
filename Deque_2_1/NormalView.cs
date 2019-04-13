@@ -16,67 +16,17 @@ public partial class Deque<T> : IDeque<T>
 			end = arrays.Length/2;
 		}
 
-		public NormalView(Map<U> arrays, int count, int begin, int end)
+		public NormalView(Map<U> arrays)
 		{
 			this.arrays = arrays;
-			this.Count = count;
-			this.begin = begin;
-			this.end = end;
 		}
 
-        public override int IndexOf(U item)
-        {
-            int result = 0;
-            for (int i = begin; i <= end; i++)
-            {
-                int currIndex = arrays[i].IndexOf(item);
-                if (currIndex >= 0)
-                    return result + currIndex;
-                result += Array<U>.Size - 1;
-            }
-            return -1;
-        }
+		public override int IndexOf(U item) => ReallyIndexOf(item);
 
         public override U this[int index]
 		{
 			get => ReallyIndexerGet(index);
 			set => ReallyIndexerSet(index, value);
-			/* Another attempt
-			get
-			{
-				if (index < 0)
-					throw new IndexOutOfRangeException();
-
-				return arrays[((index - arrays[begin].Count) / Array<U>.Size) + 1]
-					[(index - arrays[begin].Count) % Array<U>.Size];
-
-				//int count = 0;
-				//for (int i = begin; i <= end; i++)
-				//	if (index < count + arrays[i].Count)
-				//		return arrays[i][index - count];
-				//	else
-				//		count += arrays[i].Count;
-			}
-			set
-			{
-				if (index < 0)
-					throw new IndexOutOfRangeException();
-
-				arrays[((index - arrays[begin].Count) / Array<U>.Size) + 1]
-					[(index - arrays[begin].Count) % Array<U>.Size] = value;
-				//if (index < 0)
-				//	throw new IndexOutOfRangeException();
-				//int count = 0;
-				//for (int i = begin; i <= end; i++)
-				//	if (index < count + arrays[i].Count)
-				//	{
-				//		arrays[i][index - count] = value;
-				//		return;
-				//	}
-				//	else
-				//		count += arrays[i].Count;
-				//throw new IndexOutOfRangeException();
-			} */
 		}
 
 		public override void AddBack(U item) => ReallyAddBack(item);
@@ -87,7 +37,7 @@ public partial class Deque<T> : IDeque<T>
 
 		public override U GetFront() => ReallyGetFront();
 
-		public override IDeque<U> GetReverseView() => new InvertedView<U>(arrays, Count, end, begin);
+		public override IDeque<U> GetReverseView() => new InvertedView<U>(arrays);
 	}
 }
 

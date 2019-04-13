@@ -9,56 +9,27 @@ public partial class Deque<T> : IDeque<T>
 {
 	class InvertedView<U> : View<U>
 	{
-		internal InvertedView(Map<U> arrays, int count, int end, int begin)
+		internal InvertedView(Map<U> arrays)
 		{
 			this.arrays = arrays;
-			this.Count = count;
-			this.end = begin;
-			this.begin = end;
 		}
 
 		public override U this[int index]
 		{
-			get => ReallyIndexerGet(Count - index);
-			set => ReallyIndexerSet(Count - index, value);
-			/*
-			get
-			{
-				if (index < 0)
-					throw new IndexOutOfRangeException();
-				int count = 0;
-				for (int i = end; i >= begin; i--)
-					if (index < count + arrays[i].Count)
-						return arrays[i][arrays[i].Count - (index - count)];
-					else
-						count += arrays[i].Count;
-				throw new IndexOutOfRangeException();
-			}
-			set
-			{
-				if (index < 0)
-					throw new IndexOutOfRangeException();
-				int count = 0;
-				for (int i = end; i >= begin; i--)
-					if (index < count + arrays[i].Count)
-					{
-						arrays[i][arrays[i].Count - (index - count)] = value;
-						return;
-					}
-					else
-						count += arrays[i].Count;
-				throw new IndexOutOfRangeException();
-			} */
+			get => ReallyIndexerGet(Count - 1 - index);
+			set => ReallyIndexerSet(Count - 1 - index, value);
 		}
 
-        public override int IndexOf(U item)
-        {
-            throw new NotImplementedException();
-        }
+		public override int IndexOf(U item) {
+			int result = ReallyIndexOf(item);
+			if (result < 0)
+				return result;
+			return Count - result;
+		}
 
         public override U GetFront() => ReallyGetBack();
 
-		public override IDeque<U> GetReverseView() => new NormalView<U>(arrays, Count, begin, end);
+		public override IDeque<U> GetReverseView() => new NormalView<U>(arrays);
 
 		public override void AddBack(U item) => ReallyAddFront(item);
 

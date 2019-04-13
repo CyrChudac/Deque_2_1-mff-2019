@@ -10,11 +10,23 @@ public partial class Deque<T> : IDeque<T>
 	abstract class View<U> : IDeque<U>
 	{
 		protected Map<U> arrays;
-		protected int begin, end;
+		protected int begin
+		{
+			get => arrays.begin;
+			set => arrays.begin = value;
+		}
+		protected int end
+		{
+			get => arrays.end;
+			set => arrays.end = value;
+		}
 
 		public abstract U this[int index] { get; set; }
 
-		public int Count { get; protected set; } = 0;
+		public int Count {
+			get => arrays.Count;
+			protected set => arrays.Count = value;
+		}
 		public bool IsReadOnly => false;
 
 		public void Add(U item) => AddBack(item);
@@ -93,15 +105,42 @@ public partial class Deque<T> : IDeque<T>
 		}
 
 
+		protected int ReallyIndexOf(U item)
+		{
+			int result = 0;
+			for (int i = begin; i <= end; i++)
+			{
+				int currIndex = arrays[i].IndexOf(item);
+				if (currIndex >= 0)
+					return result + currIndex;
+				result += Array<U>.Size - 1;
+			}
+			return -1;
+		}
 		protected U ReallyIndexerGet(int index)
 		{
-			return arrays[((index - arrays[begin].Count) / Array<U>.Size) + 1]
-				[(index - arrays[begin].Count) % Array<U>.Size];
+			if (index < arrays[begin].Count)
+				return arrays[begin][index];
+			index -= arrays[begin].Count;
+			return arrays[begin + 1 + index / Array<U>.Size][index % Array<U>.Size];
+			//return arrays[begin + ((index - arrays[begin].Count) / Array<U>.Size) + 1]
+			//	[(index - Array<U>.Size + arrays[begin].Count) % Array<U>.Size];
+			////return arrays[begin + ((index - arrays[begin].Count) / Array<U>.Size) + 1]
+			////	[(index - arrays[begin].Count) % Array<U>.Size];
 		}
 		protected void ReallyIndexerSet(int index, U item)
 		{
-			arrays[((index - arrays[begin].Count) / Array<U>.Size) + 1]
-				[(index - arrays[begin].Count) % Array<U>.Size] = item;
+			if (index < arrays[begin].Count)
+			{
+				arrays[begin][index] = item;
+				return;
+			}
+			index -= arrays[begin].Count;
+			arrays[begin + 1 + index / Array<U>.Size][index % Array<U>.Size] = item;
+			//arrays[begin + ((index - arrays[begin].Count) / Array<U>.Size) + 1]
+			//	[(index - Array<U>.Size + arrays[begin].Count) % Array<U>.Size] = item;
+			////arrays[(index - arrays[begin].Count + Array<U>.Size) / Array<U>.Size]
+			////	[((index - arrays[begin].Count + Array<U>.Size) % Array<U>.Size) - 1] = item;
 		}
 		protected void ReallyAddBack(U item)
 		{
@@ -242,6 +281,14 @@ public partial class Deque<T> : IDeque<T>
         {
             Array<V>[] map;
 
+			public int begin, end;
+			/// <summary>
+			/// Total number of elements in the queue.
+			/// </summary>
+			public int Count { get; set; } = 0;
+			/// <summary>
+			/// Total number of array that queue consists of.
+			/// </summary>
             public int Length => map.Length;
             public Map(int capacity)
             {
