@@ -9,6 +9,8 @@ namespace UnitTests1
 {
 	class FakeDeque<T> : IDeque<T>
 	{
+		public FakeDeque() { }
+		private FakeDeque(List<T> list) { this.list = list; }
 		List<T> list = new List<T>();
 
 		public T this[int index] { get => list[index]; set => list[index] = value; }
@@ -31,7 +33,9 @@ namespace UnitTests1
 		public T GetFront() => Get(0);
 		public IDeque<T> GetReverseView()
 		{
-			throw new NotImplementedException();
+			T[] array = new T[list.Count];
+			list.CopyTo(array);
+			return new FakeDeque<T>(array.Reverse().ToList());
 		}
 		public int IndexOf(T item) => list.IndexOf(item);
 		public void Insert(int index, T item) => list.Insert(index, item);

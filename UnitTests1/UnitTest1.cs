@@ -3,93 +3,149 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests1
 {
-	[TestClass]
-	public class TestNormalView
+
+	interface TestOneView
 	{
-		UnitTest1 testingClass = new UnitTest1( new Deque<int>());
-		[TestMethod]
-		public void CapacityContructor() => testingClass.CapacityContructor();
-		[TestMethod]
-		public void Add1Element() => testingClass.Add1Element();
-		[TestMethod]
-		public void AddElements() => testingClass.AddElements();
-		[TestMethod]
-		public void ForeachOnElements() => testingClass.ForeachOnElements();
-		[TestMethod]
-		public void Indexer() => testingClass.Indexer();
-		[TestMethod]
-		public void Count() => testingClass.Indexer();
-		[TestMethod]
-		public void InsertBigIndex() => testingClass.InsertBigIndex();
-		[TestMethod]
-		public void InsertSmallIndex() => testingClass.InsertSmallIndex();
-		[TestMethod]
-		public void Insert0___() => testingClass.Insert0___();
-		[TestMethod]
-		public void RemoveSmallIndex() => testingClass.RemoveSmallIndex();
-		[TestMethod]
-		public void RemoveBigIndex() => testingClass.RemoveBigIndex();
-		[TestMethod]
-		public void IndexOf() => testingClass.IndexOf();
-		[TestMethod]
-		public void RemoveAtGeneral() => testingClass.RemoveAtGeneral();
-		[TestMethod]
-		public void Count_VS() => testingClass.Count_VS();
-		[TestMethod]
-		public void RemoveAt0() => testingClass.RemoveAt0();
-		[TestMethod]
-		public void Clear() => testingClass.Clear();
-	}
-	[TestClass]
-	public class TestReverseView
-	{
-		UnitTest1 testingClass = new UnitTest1(new Deque<int>().GetReverseView());
-		[TestMethod]
-		public void CapacityContructor() => testingClass.CapacityContructor();
-		[TestMethod]
-		public void Add1Element() => testingClass.Add1Element();
-		[TestMethod]
-		public void AddElements() => testingClass.AddElements();
-		[TestMethod]
-		public void ForeachOnElements() => testingClass.ForeachOnElements();
-		[TestMethod]
-		public void Indexer() => testingClass.Indexer();
-		[TestMethod]
-		public void Count() => testingClass.Indexer();
-		[TestMethod]
-		public void InsertBigIndex() => testingClass.InsertBigIndex();
-		[TestMethod]
-		public void InsertSmallIndex() => testingClass.InsertSmallIndex();
-		[TestMethod]
-		public void Insert0___() => testingClass.Insert0___();
-		[TestMethod]
-		public void RemoveSmallIndex() => testingClass.RemoveSmallIndex();
-		[TestMethod]
-		public void RemoveBigIndex() => testingClass.RemoveBigIndex();
-		[TestMethod]
-		public void IndexOf() => testingClass.IndexOf();
-		[TestMethod]
-		public void RemoveAtGeneral() => testingClass.RemoveAtGeneral();
-		[TestMethod]
-		public void Count_VS() => testingClass.Count_VS();
-		[TestMethod]
-		public void RemoveAt0() => testingClass.RemoveAt0();
-		[TestMethod]
-		public void Clear() => testingClass.Clear();
+		void CapacityContructor();
+		void Add1Element();
+		void AddElements();
+		void ForeachOnElements();
+		void ImprovedIndexer();
+		void Indexer();
+		void Count();
+		void InsertBigIndex();
+		void InsertSmallIndex();
+		void Insert0___();
+		void RemoveSmallIndex();
+		void RemoveBigIndex();
+		void IndexOf();
+		void RemoveAtGeneral();
+		void Count_VS();
+		void RemoveAt0();
+		void Clear();
 	}
 
-	public class UnitTest1
+	[TestClass]
+	public class TestNormalView : TestOneView
 	{
-		public UnitTest1(IDeque<int> deq)
+		TestOneView testingClass = new TestView( new Deque<int>());
+		[TestMethod]
+		public void CapacityContructor() => testingClass.CapacityContructor();
+		[TestMethod]
+		public void Add1Element() => testingClass.Add1Element();
+		[TestMethod]
+		public void AddElements() => testingClass.AddElements();
+		[TestMethod]
+		public void ForeachOnElements() => testingClass.ForeachOnElements();
+		[TestMethod]
+		public void ImprovedIndexer() => testingClass.ImprovedIndexer();
+		[TestMethod]
+		public void Indexer() => testingClass.Indexer();
+		[TestMethod]
+		public void Count() => testingClass.Indexer();
+		[TestMethod]
+		public void InsertBigIndex() => testingClass.InsertBigIndex();
+		[TestMethod]
+		public void InsertSmallIndex() => testingClass.InsertSmallIndex();
+		[TestMethod]
+		public void Insert0___() => testingClass.Insert0___();
+		[TestMethod]
+		public void RemoveSmallIndex() => testingClass.RemoveSmallIndex();
+		[TestMethod]
+		public void RemoveBigIndex() => testingClass.RemoveBigIndex();
+		[TestMethod]
+		public void IndexOf() => testingClass.IndexOf();
+		[TestMethod]
+		public void RemoveAtGeneral() => testingClass.RemoveAtGeneral();
+		[TestMethod]
+		public void Count_VS() => testingClass.Count_VS();
+		[TestMethod]
+		public void RemoveAt0() => testingClass.RemoveAt0();
+		[TestMethod]
+		public void Clear() => testingClass.Clear();
+	}
+	[TestClass]
+	public class TestReverseView : TestOneView
+	{
+		TestOneView testingClass = new TestView(new Deque<int>().GetReverseView());
+		[TestMethod]
+		public void CapacityContructor() => testingClass.CapacityContructor();
+		[TestMethod]
+		public void Add1Element() => testingClass.Add1Element();
+		[TestMethod]
+		public void AddElements() => testingClass.AddElements();
+		[TestMethod]
+		public void ForeachOnElements() => testingClass.ForeachOnElements();
+		[TestMethod]
+		public void ImprovedIndexer() => testingClass.ImprovedIndexer();
+		[TestMethod]
+		public void Indexer() => testingClass.Indexer();
+		[TestMethod]
+		public void Count() => testingClass.Indexer();
+		[TestMethod]
+		public void InsertBigIndex() => testingClass.InsertBigIndex();
+		[TestMethod]
+		public void InsertSmallIndex() => testingClass.InsertSmallIndex();
+		[TestMethod]
+		public void Insert0___() => testingClass.Insert0___();
+		[TestMethod]
+		public void RemoveSmallIndex() => testingClass.RemoveSmallIndex();
+		[TestMethod]
+		public void RemoveBigIndex() => testingClass.RemoveBigIndex();
+		[TestMethod]
+		public void IndexOf() => testingClass.IndexOf();
+		[TestMethod]
+		public void RemoveAtGeneral() => testingClass.RemoveAtGeneral();
+		[TestMethod]
+		public void Count_VS() => testingClass.Count_VS();
+		[TestMethod]
+		public void RemoveAt0() => testingClass.RemoveAt0();
+		[TestMethod]
+		public void Clear() => testingClass.Clear();
+	}
+	[TestClass]
+	public class TestBothViewsAtOnce
+	{
+		IDeque<int> deq = new Deque<int>();
+		[TestMethod]
+		public void TestCount()
+		{
+			for(int i = 0; i < TestView.implicitLength; i++)
+			{
+				deq.Add(TestView.rint);
+			}
+			deq = deq.GetReverseView();
+			for(int i = 0; i < TestView.implicitLength; i++)
+			{
+				deq.Add(TestView.rint);
+			}
+			IDeque<int> deq2 = deq.GetReverseView();
+			Assert.AreEqual(deq.Count, deq2.Count);
+		}
+	}
+
+	public class TestView : TestOneView
+	{
+		public TestView(IDeque<int> deq)
 		{
 			this.deq = deq;
 		}
 		readonly static Random Random = new Random(implicitLength);
-		static int rint => Random.Next();
-		readonly static int implicitLength = 40; // <-----must always be less then (4)sqrt(int.MaxValue)
+		public static int rint => Random.Next();
+		public readonly static int implicitLength = 40; // <-----must always be less then (4)sqrt(int.MaxValue)
 		IDeque<int> deq;
 		IDeque<int> fake = new FakeDeque<int>();
 
+		void CompareAndAssert()
+		{
+			string expected = "";
+			string actual = "";
+			for (int i = 0; i < fake.Count; i++)
+				expected += fake[i];
+			for (int i = 0; i < deq.Count; i++)
+				actual += deq[i];
+			Assert.AreEqual(expected, actual);
+		}
 		public void CapacityContructor()
 		{
 			IDeque<int> deq = new Deque<int>(implicitLength);
@@ -113,17 +169,30 @@ namespace UnitTests1
 				fake.Add(a);
 				deq.Add(a);
 			}
-			string expected = "";
-			foreach (var item in fake)
+			CompareAndAssert();
+		}
+		public void ImprovedIndexer()
+		{
+			for (int i = 0; i < implicitLength; i++)
 			{
-				expected += item.ToString();
+				int a = rint;
+				fake.Add(a);
+				deq.Add(a);
 			}
-			string actual = "";
-			foreach (var item in deq)
+			CompareAndAssert();
+			deq = deq.GetReverseView();
+			fake = fake.GetReverseView();
+			CompareAndAssert();
+			for (int i = 0; i < implicitLength; i++)
 			{
-				actual += item.ToString();
+				int a = rint;
+				fake.Add(a);
+				deq.Add(a);
 			}
-			Assert.AreEqual(expected, actual);
+			CompareAndAssert();
+			deq = deq.GetReverseView();
+			fake = fake.GetReverseView();
+			CompareAndAssert();
 		}
 		public void Indexer()
 		{
@@ -133,8 +202,7 @@ namespace UnitTests1
 				fake.Add(a);
 				deq.Add(a);
 			}
-			for (int i = 0; i < implicitLength; i++)
-				Assert.AreEqual(fake[i], deq[i]);
+			CompareAndAssert();
 		}
 		public void Count()
 		{
@@ -157,14 +225,7 @@ namespace UnitTests1
 			deq.Insert(index, number);
 			fake.Insert(index, number);
 			Assert.AreEqual(fake[index], deq[index]); // <--------- Also depends on indexer
-			string expected = "";
-			string actual = "";
-			for (int i = 0; i < deqLength + 1; i++)
-			{
-				expected += fake[i];
-				actual += deq[i];
-			}
-			Assert.AreEqual(expected, actual);
+			CompareAndAssert();
 		}
 		public void InsertBigIndex()
 		{
@@ -194,16 +255,9 @@ namespace UnitTests1
 					deq.Add(a);
 				}
 			}
-			string expected = "";
 			fake.Remove(item);
 			deq.Remove(item);
-			string actual = "";
-			for (int i = 0; i < deqLenght - 1; i++)
-			{
-				expected += fake[i];
-				actual += deq[i];
-			}
-			Assert.AreEqual(expected, actual);
+			CompareAndAssert();
 		}
 		public void RemoveSmallIndex()
 		{
@@ -234,13 +288,7 @@ namespace UnitTests1
 			}
 			fake.RemoveAt(at);
 			deq.RemoveAt(at);
-			string actual = "";
-			for (int i = 0; i < implicitLength - 1; i++)
-				actual += deq[i];
-			string expected = "";
-			for (int i = 0; i < implicitLength - 1; i++)
-				expected += fake[i];
-			Assert.AreEqual(expected, actual);
+			CompareAndAssert();
 		}
 		public void RemoveAtGeneral()
 		{
@@ -276,13 +324,7 @@ namespace UnitTests1
 			}
 			fake.Clear();
 			deq.Clear();
-			string expected = "";
-			for (int i = 0; i < fake.Count; i++)
-				expected += fake[i].ToString();
-			string actual = "";
-			for (int i = 0; i < deq.Count; i++)
-				actual += deq[i].ToString();
-			Assert.AreEqual(expected, actual);
+			CompareAndAssert();
 		}
 	}
 }
