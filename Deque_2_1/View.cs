@@ -115,7 +115,9 @@ public partial class Deque<T> : IDeque<T>
 			{
 				int currIndex = arrays[i].IndexOf(item);
 				if (currIndex >= 0)
-					return result + currIndex;
+				{
+						return result + currIndex;
+				}
 				result += arrays[i].Count;
 			}
 			return -1;
@@ -250,7 +252,7 @@ public partial class Deque<T> : IDeque<T>
 			public int IndexOf(V item)
 			{
 				for (int i = Begin; i <= End; i++)
-					if (list[i].Equals(item))
+					if (item.Equals(list[i]))
 						return i - Begin;
 				return -1;
 			}

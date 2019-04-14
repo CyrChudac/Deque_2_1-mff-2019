@@ -142,6 +142,12 @@ namespace DeqTests
 			IDeque<int> deq2 = deq.GetReverseView();
 			Assert.AreEqual(deq.Count, deq2.Count);
 		}
+		[TestMethod]
+		[ExpectedException(typeof(IndexOutOfRangeException))]
+		public void TestIndexOnEmptyDeq()
+		{
+			int a = deq[0];
+		}
 	}
 
 	public class TestView : TestOneView
