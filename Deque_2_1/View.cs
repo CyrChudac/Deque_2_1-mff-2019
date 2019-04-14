@@ -43,6 +43,8 @@ public partial class Deque<T> : IDeque<T>
 		{
 			if (arrayIndex < 0)
 				throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+			if (array == null)
+				throw new ArgumentNullException();
 			if (array.Length - arrayIndex < Count)
 				throw new ArgumentException("Not enough space between given index and destination array end.");
 			for (int i = 0; i < Count; i++)

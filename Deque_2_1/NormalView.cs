@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 
 public partial class Deque<T> : IDeque<T>
 {
-	public T PeekBack() => view.PeekBack();
-
-	public T PeekFront() => view.PeekFront();
-
 	class NormalView<U> : View<U>
 	{
 		public NormalView(int capacity)

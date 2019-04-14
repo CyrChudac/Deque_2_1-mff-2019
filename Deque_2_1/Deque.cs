@@ -30,14 +30,17 @@ public partial class Deque<T> : IDeque<T>
 
 	View<T> view;
 
-	public int Count => view.Count;
-	public bool IsReadOnly => false;
-	public T this[int index] { get => view[index]; set => view[index] = value; }
-	public IDeque<T> GetReverseView() => view.GetReverseView();
+	public T PeekBack() => view.PeekBack();
+	public T PeekFront() => view.PeekFront();
 	public void AddBack(T item) => view.AddBack(item);
 	public T GetBack() => view.GetBack();
 	public void AddFront(T item) => view.AddFront(item);
 	public T GetFront() => view.GetFront();
+
+	public int Count => view.Count;
+	public bool IsReadOnly => view.IsReadOnly;
+	public T this[int index] { get => view[index]; set => view[index] = value; }
+	public IDeque<T> GetReverseView() => view.GetReverseView();
 	public int IndexOf(T item) => view.IndexOf(item);
 	public void Insert(int index, T item) => view.Insert(index, item);
 	public void RemoveAt(int index) => view.RemoveAt(index);
