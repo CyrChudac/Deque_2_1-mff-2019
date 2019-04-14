@@ -95,6 +95,8 @@ public partial class Deque<T> : IDeque<T>
 			for (int i = begin; i < end; i++)
 				arrays[i] = new Array<U>();
 			Count = 0;
+			begin = arrays.Length / 2;
+			end = arrays.Length / 2;
 		}
 		public bool Contains(U item)
 		{
