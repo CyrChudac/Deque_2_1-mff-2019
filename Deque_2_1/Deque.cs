@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 public interface IDeque<T> : IList<T>
 {
+	T PeekFront();
+	T PeekBack();
+
 	void AddBack(T item);
 	T GetBack();
 
@@ -19,7 +22,11 @@ public partial class Deque<T> : IDeque<T>
 {
 	public static int ImplicitSize => 4;
 	public Deque() : this(ImplicitSize * View<T>.Array<T>.Size) { }
-	public Deque(int capacity) => view = new NormalView<T>(capacity);
+	public Deque(int capacity) {
+		if (capacity < 0)
+			throw new ArgumentOutOfRangeException();
+		view = new NormalView<T>(capacity);
+	}
 
 	View<T> view;
 

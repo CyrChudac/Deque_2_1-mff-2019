@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnitTests1
+namespace DeqTests
 {
 	class FakeDeque<T> : IDeque<T>
 	{
@@ -13,6 +13,8 @@ namespace UnitTests1
 		private FakeDeque(List<T> list) { this.list = list; }
 		List<T> list = new List<T>();
 
+		public T PeekFront() => list[0];
+		public T PeekBack() => list[list.Count - 1];
 		public T this[int index] { get => list[index]; set => list[index] = value; }
 		public int Count => list.Count;
 		public bool IsReadOnly => false;

@@ -37,7 +37,8 @@ public partial class Deque<T> : IDeque<T>
 		public abstract IDeque<U> GetReverseView();
         public abstract int IndexOf(U item);
 
-
+		public U PeekFront() => this[0];
+		public U PeekBack() => this[Count - 1];
 		public void CopyTo(U[] array, int arrayIndex)
 		{
 			if (arrayIndex < 0)
@@ -100,7 +101,7 @@ public partial class Deque<T> : IDeque<T>
 		}
 		public bool Contains(U item)
 		{
-			for (int i = begin; i < end; i++)
+			for (int i = begin; i <= end; i++)
 				if (arrays[i].Contains(item))
 					return true;
 			return false;
@@ -115,7 +116,7 @@ public partial class Deque<T> : IDeque<T>
 				int currIndex = arrays[i].IndexOf(item);
 				if (currIndex >= 0)
 					return result + currIndex;
-				result += Array<U>.Size - 1;
+				result += arrays[i].Count;
 			}
 			return -1;
 		}
@@ -125,10 +126,6 @@ public partial class Deque<T> : IDeque<T>
 				return arrays[begin][index];
 			index -= arrays[begin].Count;
 			return arrays[begin + 1 + index / Array<U>.Size][index % Array<U>.Size];
-			//return arrays[begin + ((index - arrays[begin].Count) / Array<U>.Size) + 1]
-			//	[(index - Array<U>.Size + arrays[begin].Count) % Array<U>.Size];
-			////return arrays[begin + ((index - arrays[begin].Count) / Array<U>.Size) + 1]
-			////	[(index - arrays[begin].Count) % Array<U>.Size];
 		}
 		protected void ReallyIndexerSet(int index, U item)
 		{
@@ -139,13 +136,11 @@ public partial class Deque<T> : IDeque<T>
 			}
 			index -= arrays[begin].Count;
 			arrays[begin + 1 + index / Array<U>.Size][index % Array<U>.Size] = item;
-			//arrays[begin + ((index - arrays[begin].Count) / Array<U>.Size) + 1]
-			//	[(index - Array<U>.Size + arrays[begin].Count) % Array<U>.Size] = item;
-			////arrays[(index - arrays[begin].Count + Array<U>.Size) / Array<U>.Size]
-			////	[((index - arrays[begin].Count + Array<U>.Size) % Array<U>.Size) - 1] = item;
 		}
 		protected void ReallyAddBack(U item)
 		{
+			if (end == begin && arrays[begin].isBackFull)
+				end++;
 			if(arrays[end].Count == Array<U>.Size)
 			{
 				if(end == arrays.Length - 1)
@@ -176,6 +171,8 @@ public partial class Deque<T> : IDeque<T>
 
 		protected void ReallyAddFront(U item)
 		{
+			if (end == begin && arrays[begin].isFrontFull)
+				begin--;
 			if (arrays[begin].Count == Array<U>.Size)
 			{
 				if (begin == 0)
@@ -192,6 +189,7 @@ public partial class Deque<T> : IDeque<T>
 
 		class Enumerator<V> : IEnumerator<V>
 		{
+			bool disposed = false;
 			int index = -1;
 			readonly int count;
 			View<V> view;
@@ -205,6 +203,8 @@ public partial class Deque<T> : IDeque<T>
 			public V Current {
 				get
 				{
+					if (disposed)
+						throw new ObjectDisposedException("Enumerator<" + nameof(V) + ">");
 					if (index < 0 || index > view.Count - 1)
 						throw new InvalidOperationException("You did not use MoveNext yet or you are already at the collection end.");
 					return view[index];
@@ -216,16 +216,20 @@ public partial class Deque<T> : IDeque<T>
 			public bool MoveNext()
 			{
 				index++;
+				if (disposed)
+					throw new ObjectDisposedException("Enumerator<" + nameof(V) + ">");
 				if (count != view.Count)
 					throw new InvalidOperationException();
 				return index < view.Count;
 			}
 			public void Reset() => index = -1;
-			public void Dispose() { }
+			public void Dispose() { disposed = true; }
 		}
 
 		public sealed class Array<V>
 		{
+			public bool isFrontFull => Begin <= 0;
+			public bool isBackFull => End >= Size - 1;
 			public static readonly int Size = 32;
 			public int MaxSize => Size;
 			public int Count { get; private set; } = 0;
@@ -235,7 +239,12 @@ public partial class Deque<T> : IDeque<T>
 			public bool Contains(V item) => list.Contains(item);
 			public V this[int i]
 			{
-				get => list[Begin + i];
+				get
+				{
+					if (i < 0 || i > Size)
+						throw new IndexOutOfRangeException();
+					return list[Begin + i];
+				}
 				set => list[Begin + i] = value;
 			}
 			public int IndexOf(V item)
@@ -255,6 +264,8 @@ public partial class Deque<T> : IDeque<T>
 			}
 			public V GetBack()
 			{
+				if (Count < 1)
+					throw new InvalidOperationException();
 				V result = list[End];
 				list[End] = default(V);
 				End--;
@@ -271,6 +282,8 @@ public partial class Deque<T> : IDeque<T>
 			}
 			public V GetFront()
 			{
+				if (Count < 1)
+					throw new InvalidOperationException();
 				V result = list[Begin];
 				list[Begin] = default(V);
 				Begin++;
@@ -289,7 +302,7 @@ public partial class Deque<T> : IDeque<T>
 			/// </summary>
 			public int Count { get; set; } = 0;
 			/// <summary>
-			/// Total number of array that queue consists of.
+			/// Total number of arrays that queue consists of.
 			/// </summary>
             public int Length => map.Length;
             public Map(int capacity)

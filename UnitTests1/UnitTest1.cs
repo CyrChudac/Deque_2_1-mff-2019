@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTests1
+namespace DeqTests
 {
 
 	interface TestOneView
@@ -23,6 +23,10 @@ namespace UnitTests1
 		void Count_VS();
 		void RemoveAt0();
 		void Clear();
+		void ImprovedRemoveAt0();
+		void AddAndRemoveEnd();
+		void InsertAtEnd();
+		void Add_Insert_Count();
 	}
 
 	[TestClass]
@@ -63,6 +67,14 @@ namespace UnitTests1
 		public void RemoveAt0() => testingClass.RemoveAt0();
 		[TestMethod]
 		public void Clear() => testingClass.Clear();
+		[TestMethod]
+		public void ImprovedRemoveAt0() => testingClass.ImprovedRemoveAt0();
+		[TestMethod]
+		public void AddAndRemoveEnd() => testingClass.AddAndRemoveEnd();
+		[TestMethod]
+		public void InsertAtEnd() => testingClass.InsertAtEnd();
+		[TestMethod]
+		public void Add_Insert_Count() => testingClass.Add_Insert_Count();
 	}
 	[TestClass]
 	public class TestReverseView : TestOneView
@@ -102,6 +114,14 @@ namespace UnitTests1
 		public void RemoveAt0() => testingClass.RemoveAt0();
 		[TestMethod]
 		public void Clear() => testingClass.Clear();
+		[TestMethod]
+		public void ImprovedRemoveAt0() => testingClass.ImprovedRemoveAt0();
+		[TestMethod]
+		public void AddAndRemoveEnd() => testingClass.AddAndRemoveEnd();
+		[TestMethod]
+		public void InsertAtEnd() => testingClass.InsertAtEnd();
+		[TestMethod]
+		public void Add_Insert_Count() => testingClass.Add_Insert_Count();
 	}
 	[TestClass]
 	public class TestBothViewsAtOnce
@@ -136,6 +156,15 @@ namespace UnitTests1
 		IDeque<int> deq;
 		IDeque<int> fake = new FakeDeque<int>();
 
+		void AddToBoth()
+		{
+			for (int i = 0; i < implicitLength; i++)
+			{
+				int a = rint;
+				deq.Add(a);
+				fake.Add(a);
+			}
+		}
 		void CompareAndAssert()
 		{
 			string expected = "";
@@ -156,39 +185,28 @@ namespace UnitTests1
 		}
 		public void AddElements()
 		{
-			for (int i = 0; i < implicitLength; i++)
-			{
-				deq.Add(rint);
-			}
+			AddToBoth();
 		}
 		public void ForeachOnElements()
 		{
-			for (int i = 0; i < implicitLength; i++)
-			{
-				int a = rint;
-				fake.Add(a);
-				deq.Add(a);
-			}
-			CompareAndAssert();
+			AddToBoth();
+			string expected = "";
+			string actual = "";
+			foreach(var item in fake)
+				expected += item;
+			foreach(var item in deq)
+				actual += item;
+			Assert.AreEqual(expected, actual);
+
 		}
 		public void ImprovedIndexer()
 		{
-			for (int i = 0; i < implicitLength; i++)
-			{
-				int a = rint;
-				fake.Add(a);
-				deq.Add(a);
-			}
+			AddToBoth();
 			CompareAndAssert();
 			deq = deq.GetReverseView();
 			fake = fake.GetReverseView();
 			CompareAndAssert();
-			for (int i = 0; i < implicitLength; i++)
-			{
-				int a = rint;
-				fake.Add(a);
-				deq.Add(a);
-			}
+			AddToBoth();
 			CompareAndAssert();
 			deq = deq.GetReverseView();
 			fake = fake.GetReverseView();
@@ -196,22 +214,12 @@ namespace UnitTests1
 		}
 		public void Indexer()
 		{
-			for (int i = 0; i < implicitLength; i++)
-			{
-				int a = rint;
-				fake.Add(a);
-				deq.Add(a);
-			}
+			AddToBoth();
 			CompareAndAssert();
 		}
 		public void Count()
 		{
-			for (int i = 0; i < implicitLength; i++)
-			{
-				int a = rint;
-				fake.Add(a);
-				deq.Add(a);
-			}
+			AddToBoth();
 			Assert.AreEqual(fake.Count, deq.Count);
 		}
 		void Insert(int index, int number, int deqLength)
@@ -224,7 +232,6 @@ namespace UnitTests1
 			}
 			deq.Insert(index, number);
 			fake.Insert(index, number);
-			Assert.AreEqual(fake[index], deq[index]); // <--------- Also depends on indexer
 			CompareAndAssert();
 		}
 		public void InsertBigIndex()
@@ -269,23 +276,13 @@ namespace UnitTests1
 		}
 		public void IndexOf()
 		{
-			for (int i = 0; i < implicitLength; i++)
-			{
-				int a = rint;
-				fake.Add(a);
-				deq.Add(a);
-			}
+			AddToBoth();
 			Assert.AreEqual(fake.IndexOf(0), deq.IndexOf(0));
 			Assert.AreEqual(fake.IndexOf(implicitLength - 3), deq.IndexOf(implicitLength - 3));
 		}
-		public void RemoveAt(int at)
+		void RemoveAt(int at)
 		{
-			for (int i = 0; i < implicitLength; i++)
-			{
-				int a = rint;
-				fake.Add(a);
-				deq.Add(a);
-			}
+			AddToBoth();
 			fake.RemoveAt(at);
 			deq.RemoveAt(at);
 			CompareAndAssert();
@@ -316,14 +313,50 @@ namespace UnitTests1
 		}
 		public void Clear()
 		{
-			for (int i = 0; i < implicitLength; i++)
-			{
-				int a = rint;
-				fake.Add(a);
-				deq.Add(a);
-			}
+			AddToBoth();
 			fake.Clear();
 			deq.Clear();
+			CompareAndAssert();
+		}
+		public void ImprovedRemoveAt0()
+		{
+			AddToBoth();
+			for (int i = 0; i < implicitLength; i++)
+			{
+				deq.RemoveAt(0);
+				fake.RemoveAt(0);
+			}
+			CompareAndAssert();
+		}
+		public void AddAndRemoveEnd()
+		{
+			AddToBoth();
+			AddToBoth();
+			for(int i = 0; i < implicitLength; i++)
+			{
+				deq.RemoveAt(deq.Count - 1);
+				fake.RemoveAt(fake.Count - 1);
+			}
+			AddToBoth();
+			for (int i = 0; i < implicitLength; i++)
+			{
+				deq.RemoveAt(deq.Count - 1);
+				fake.RemoveAt(fake.Count - 1);
+			}
+			CompareAndAssert();
+		}
+		public void InsertAtEnd()
+		{
+			Insert(implicitLength, 3, implicitLength);
+		}
+		public void Add_Insert_Count()
+		{
+			AddToBoth();
+			for (int i = 0; i < deq.Count; i += 2)
+				deq.Insert(i, i);
+			for (int i = 0; i < fake.Count; i += 2)
+				fake.Insert(i, i);
+			Assert.AreEqual(fake.Count, deq.Count);
 			CompareAndAssert();
 		}
 	}
