@@ -91,8 +91,8 @@ public partial class Deque<T> : IDeque<T>
                 GetFront();
 			}
 		}
-		public IEnumerator<U> GetEnumerator() => new Enumerator<U>(this);
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<U> GetEnumerator() => EnumeratorSymulation();
+		IEnumerator IEnumerable.GetEnumerator() => EnumeratorSymulation();
 		public void Clear() => arrays.Clear();
 		public bool Contains(U item)
 		{
@@ -181,45 +181,15 @@ public partial class Deque<T> : IDeque<T>
 			arrays[begin].AddFront(item);
 		}
 
-
-
-		class Enumerator<V> : IEnumerator<V>
+		public IEnumerator<U> EnumeratorSymulation()
 		{
-			bool disposed = false;
-			int index = -1;
-			readonly int count;
-			View<V> view;
-
-			public Enumerator(View<V> view)
+			int count = Count;
+			for(int i = 0; i < Count; i++)
 			{
-				this.view = view;
-				count = view.Count;
-			}
-
-			public V Current {
-				get
-				{
-					if (disposed)
-						throw new ObjectDisposedException("Enumerator<" + nameof(V) + ">");
-					if (index < 0 || index > view.Count - 1)
-						throw new InvalidOperationException("You did not use MoveNext yet or you are already at the collection end.");
-					return view[index];
-				}
-			}
-
-			object IEnumerator.Current => Current;
-
-			public bool MoveNext()
-			{
-				index++;
-				if (disposed)
-					throw new ObjectDisposedException("Enumerator<" + nameof(V) + ">");
-				if (count != view.Count)
+				if (count != Count)
 					throw new InvalidOperationException();
-				return index < view.Count;
+				yield return this[i];
 			}
-			public void Reset() => index = -1;
-			public void Dispose() { disposed = true; }
 		}
 
 		public sealed class Array<V>
