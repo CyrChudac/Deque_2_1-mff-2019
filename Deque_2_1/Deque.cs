@@ -50,7 +50,7 @@ public partial class Deque<T> : IDeque<T>
 	public void CopyTo(T[] array, int arrayIndex) => view.CopyTo(array, arrayIndex);
 	public bool Remove(T item) => view.Remove(item);
 	public IEnumerator<T> GetEnumerator() => view.GetEnumerator();
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)view).GetEnumerator();
 }
 
 

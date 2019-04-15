@@ -54,13 +54,13 @@ public partial class Deque<T> : IDeque<T>
 		{
 			if (index > Count - index)
 			{
-				AddBack(this[Count - 1]);
+				AddBack(default(U));
 				for (int i = Count - 1; i > index; i--)
 					this[i] = this[i - 1];
 			}
 			else
 			{
-				AddFront(this[0]);
+				AddFront(default(U));
 				for (int i = 0; i < index; i++)
 					this[i] = this[i + 1];
 			}
@@ -93,14 +93,7 @@ public partial class Deque<T> : IDeque<T>
 		}
 		public IEnumerator<U> GetEnumerator() => new Enumerator<U>(this);
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		public void Clear()
-		{
-			for (int i = begin; i < end; i++)
-				arrays[i] = new Array<U>();
-			Count = 0;
-			begin = arrays.Length / 2;
-			end = arrays.Length / 2;
-		}
+		public void Clear() => arrays.Clear();
 		public bool Contains(U item)
 		{
 			for (int i = begin; i <= end; i++)
@@ -156,7 +149,6 @@ public partial class Deque<T> : IDeque<T>
 			Count++;
 			arrays[end].AddBack(item);
 		}
-
 		protected U ReallyGetBack()
 		{
 			if (arrays[end].Count == 0)
@@ -164,7 +156,6 @@ public partial class Deque<T> : IDeque<T>
 			Count--;
 			return arrays[end].GetBack();
 		}
-
 		protected U ReallyGetFront()
 		{
 			if (arrays[begin].Count == 0)
@@ -172,7 +163,6 @@ public partial class Deque<T> : IDeque<T>
 			Count--;
 			return arrays[begin].GetFront();
 		}
-
 		protected void ReallyAddFront(U item)
 		{
 			if (end == begin && arrays[begin].isFrontFull)
@@ -190,6 +180,8 @@ public partial class Deque<T> : IDeque<T>
 			Count++;
 			arrays[begin].AddFront(item);
 		}
+
+
 
 		class Enumerator<V> : IEnumerator<V>
 		{
@@ -239,7 +231,9 @@ public partial class Deque<T> : IDeque<T>
 			public int Count { get; private set; } = 0;
 			public int Begin { get; private set; } = Size;
 			public int End { get; private set; } = -1;
+
 			public V[] list = new V[Size];
+
 			public bool Contains(V item) => list.Contains(item);
 			public V this[int i]
 			{
@@ -323,10 +317,18 @@ public partial class Deque<T> : IDeque<T>
 			}
 			public Array<V> this[int index] {
                 get => map[index];
-                set => map[index] = value;
+                private set => map[index] = value;
             }
+			public void Clear()
+			{
+				for (int i = begin; i <= end; i++)
+					this[i] = new Array<V>();
+				Count = 0;
+				begin = Length / 2;
+				end = Length / 2;
+			}
 
-            public void IncreaseBack()
+			public void IncreaseBack()
             {
                 Array<V>[] newMap = GetNewMap(map.Length * 2);
                 map.CopyTo(newMap, 0);

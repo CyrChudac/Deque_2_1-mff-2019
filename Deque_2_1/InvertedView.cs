@@ -24,7 +24,7 @@ public partial class Deque<T> : IDeque<T>
 			int result = ReallyIndexOf(item);
 			if (result < 0)
 				return result;
-			return Count - result;
+			return Count - 1 - result;
 		}
 
         public override U GetFront() => ReallyGetBack();

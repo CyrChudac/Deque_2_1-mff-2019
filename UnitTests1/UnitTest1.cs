@@ -27,6 +27,7 @@ namespace DeqTests
 		void AddAndRemoveEnd();
 		void InsertAtEnd();
 		void Add_Insert_Count();
+		void InsertInEmpty();
 	}
 
 	[TestClass]
@@ -75,6 +76,8 @@ namespace DeqTests
 		public void InsertAtEnd() => testingClass.InsertAtEnd();
 		[TestMethod]
 		public void Add_Insert_Count() => testingClass.Add_Insert_Count();
+		[TestMethod]
+		public void InsertInEmpty() => testingClass.InsertInEmpty();
 	}
 	[TestClass]
 	public class TestReverseView : TestOneView
@@ -122,6 +125,8 @@ namespace DeqTests
 		public void InsertAtEnd() => testingClass.InsertAtEnd();
 		[TestMethod]
 		public void Add_Insert_Count() => testingClass.Add_Insert_Count();
+		[TestMethod]
+		public void InsertInEmpty() => testingClass.InsertInEmpty();
 	}
 	[TestClass]
 	public class TestBothViewsAtOnce
@@ -364,6 +369,208 @@ namespace DeqTests
 				fake.Insert(i, i);
 			Assert.AreEqual(fake.Count, deq.Count);
 			CompareAndAssert();
+		}
+		public void InsertInEmpty()
+		{
+			deq.Insert(0, 5);
+			Assert.AreEqual(5, deq.PeekBack());
+		}
+	}
+
+	[TestClass]
+	public class TestOnNulls
+	{
+		IDeque<int?> deq = new Deque<int?>().GetReverseView();
+		IDeque<int?> fake = new FakeDeque<int?>().GetReverseView();
+		static int ImplicitInt => 20;
+
+		[TestMethod]
+		public void Add_Null()
+		{
+			deq.Add(null);
+			fake.Add(null);
+			Assert.AreEqual(fake[0], deq[0]);
+		}
+		[TestMethod]
+		public void Add_Nulls()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				fake.Add(null);
+				deq.Add(null);
+			}
+			for (int i = 0; i < ImplicitInt; i++)
+				Assert.AreEqual(fake[i], deq[i]);
+		}
+		[TestMethod]
+		public void Add_NullsAndNumbers()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Add(5);
+				deq.Add(null);
+				fake.Add(5);
+				fake.Add(null);
+			}
+			for (int i = 0; i < ImplicitInt; i++)
+				Assert.AreEqual(fake[i], deq[i]);
+		}
+		[TestMethod]
+		public void Remove_NullFromEmpty()
+		{
+			if (deq.Remove(null))
+				throw new Exception("Attempt to remove null from epmty deque succeeded.");
+		}
+		[TestMethod]
+		public void Remove_Nulls()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Add(5);
+				deq.Add(null);
+			}
+			for (int i = 0; i < ImplicitInt; i++)
+				if (!deq.Remove(null))
+					throw new Exception("there should be enough nulls to remove");
+		}
+		[TestMethod]
+		public void Remove_NullsWithNoNullsInside()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Add(5);
+			}
+			for (int i = 0; i < ImplicitInt; i++)
+				if (deq.Remove(null))
+					throw new Exception("there should be enough nulls to remove");
+		}
+		[TestMethod]
+		public void Insert_NullsAndNumbers()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Insert(i, 5);
+				deq.Insert(i, null);
+				fake.Insert(i, 5);
+				fake.Insert(i, null);
+			}
+			for (int i = 0; i < ImplicitInt; i++)
+				Assert.AreEqual(fake[i], deq[i]);
+		}
+		[TestMethod]
+		public void Contains_WithNulls()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Add(null);
+			}
+			deq.Insert(ImplicitInt / 2, 5);
+
+			Assert.IsTrue(deq.Contains(5));
+		}
+		[TestMethod]
+		public void IndexOf_Null()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Add(5);
+			}
+			deq.Insert(8, null);
+
+			Assert.AreEqual(8, deq.IndexOf(null));
+		}
+		[TestMethod]
+		public void IndexOf_WithNulls()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Add(null);
+			}
+			deq.Insert(8, 5);
+
+			Assert.AreEqual(8, deq.IndexOf(5));
+		}
+		[TestMethod]
+		public void RemoveAt_Null()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Add(5);
+			}
+			deq.Insert(8, null);
+
+			deq.RemoveAt(8);
+		}
+		[TestMethod]
+		public void RemoveAt_WithNulls()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.Add(null);
+			}
+			deq.Insert(8, 8);
+
+			deq.RemoveAt(8);
+		}
+		[TestMethod]
+		public void Clear_NullsAndNumbers()
+		{
+			Add_NullsAndNumbers();
+			deq.Clear();
+			Assert.AreEqual(0, deq.Count);
+		}
+		[TestMethod]
+		public void CopyTo_NullsAndNumbers()
+		{
+			Add_NullsAndNumbers();
+			int count = deq.Count;
+			int?[] testingArray = new int?[ImplicitInt * 2];
+			deq.CopyTo(testingArray, 0);
+			Assert.AreEqual(count, testingArray.Length);
+		}
+		[TestMethod]
+		public void IndexerGet_NullsAndNumbers()
+		{
+			Add_NullsAndNumbers();
+			for (int i = 0; i < deq.Count; i++)
+				Assert.AreEqual(fake[i], deq[i]);
+		}
+		[TestMethod]
+		public void IndexerSet_NullsAndNumbers()
+		{
+			Add_NullsAndNumbers();
+			int count = deq.Count;
+			for (int i = 0; i < deq.Count; i++)
+				deq[i] = null;
+			Assert.AreEqual(count, deq.Count);
+			deq.Clear(); // <------ nedovoli prekladaci optimalizaci ve for cyklu
+		}
+		[TestMethod]
+		public void Foreach_WithNulls()
+		{
+			Add_NullsAndNumbers();
+			foreach (var item in deq)
+			{
+				if (item.Equals(-1))
+					throw new Exception("there should be no -1 in the Deque");
+			}
+		}
+		[TestMethod]
+		public void AddBack_AddFront_Null()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.AddFront(5);
+				deq.AddFront(null);
+				deq.AddBack(6);
+				deq.AddBack(null);
+				fake.AddFront(5);
+				fake.AddFront(null);
+				fake.AddBack(6);
+				fake.AddBack(null);
+			}
+			for (int i = 0; i < ImplicitInt * 4; i++)
+				Assert.AreEqual(fake[i], deq[i]);
 		}
 	}
 }
