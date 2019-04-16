@@ -247,9 +247,18 @@ public partial class Deque<T> : IDeque<T>
 			}
 			public int IndexOf(V item)
 			{
-				for (int i = Begin; i <= End; i++)
-					if (item.Equals(list[i]))
-						return i - Begin;
+				if (item == null)
+				{
+					for (int i = Begin; i <= End; i++)
+						if (list[i] == null)
+							return i - Begin;
+				}
+				else
+				{
+					for (int i = Begin; i <= End; i++)
+						if (item.Equals(list[i]))
+							return i - Begin;
+				}
 				return -1;
 			}
 			public void AddBack(V item)
