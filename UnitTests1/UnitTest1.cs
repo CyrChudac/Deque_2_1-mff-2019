@@ -33,7 +33,7 @@ namespace DeqTests
 	[TestClass]
 	public class TestNormalView : TestOneView
 	{
-		TestOneView testingClass = new TestView( new Deque<int>());
+		TestOneView testingClass = new TestView(new Deque<int>());
 		[TestMethod]
 		public void CapacityContructor() => testingClass.CapacityContructor();
 		[TestMethod]
@@ -135,12 +135,12 @@ namespace DeqTests
 		[TestMethod]
 		public void TestCount()
 		{
-			for(int i = 0; i < TestView.implicitLength; i++)
+			for (int i = 0; i < TestView.implicitLength; i++)
 			{
 				deq.Add(TestView.rint);
 			}
 			deq = deq.GetReverseView();
-			for(int i = 0; i < TestView.implicitLength; i++)
+			for (int i = 0; i < TestView.implicitLength; i++)
 			{
 				deq.Add(TestView.rint);
 			}
@@ -203,9 +203,9 @@ namespace DeqTests
 			AddToBoth();
 			string expected = "";
 			string actual = "";
-			foreach(var item in fake)
+			foreach (var item in fake)
 				expected += item;
-			foreach(var item in deq)
+			foreach (var item in deq)
 				actual += item;
 			Assert.AreEqual(expected, actual);
 
@@ -300,7 +300,7 @@ namespace DeqTests
 		}
 		public void RemoveAtGeneral()
 		{
-			RemoveAt( rint % implicitLength);
+			RemoveAt(rint % implicitLength);
 		}
 		public void Count_VS()
 		{
@@ -311,7 +311,7 @@ namespace DeqTests
 				deq.Add(a);
 			}
 			Assert.AreEqual(fake.Count, deq.Count);
-			for (int i = 0; i < implicitLength * implicitLength ; i++)
+			for (int i = 0; i < implicitLength * implicitLength; i++)
 			{
 				fake.RemoveAt(i);
 				deq.RemoveAt(i);
@@ -343,7 +343,7 @@ namespace DeqTests
 		{
 			AddToBoth();
 			AddToBoth();
-			for(int i = 0; i < implicitLength; i++)
+			for (int i = 0; i < implicitLength; i++)
 			{
 				deq.RemoveAt(deq.Count - 1);
 				fake.RemoveAt(fake.Count - 1);
@@ -381,8 +381,8 @@ namespace DeqTests
 	public class TestOnNulls
 	{
 		IDeque<int?> deq = new Deque<int?>().GetReverseView();
-		IDeque<int?> fake = new FakeDeque<int?>().GetReverseView();
-		static int ImplicitInt => 20;
+		IDeque<int?> fake = new FakeDeque<int?>();
+		static int ImplicitInt => 70;
 
 		[TestMethod]
 		public void Add_Null()
@@ -471,24 +471,26 @@ namespace DeqTests
 		[TestMethod]
 		public void IndexOf_Null()
 		{
+			int index = ImplicitInt / 2;
 			for (int i = 0; i < ImplicitInt; i++)
 			{
 				deq.Add(5);
 			}
-			deq.Insert(8, null);
+			deq.Insert(index, null);
 
-			Assert.AreEqual(8, deq.IndexOf(null));
+			Assert.AreEqual(index, deq.IndexOf(null));
 		}
 		[TestMethod]
 		public void IndexOf_WithNulls()
 		{
+			int index = ImplicitInt / 2;
 			for (int i = 0; i < ImplicitInt; i++)
 			{
 				deq.Add(null);
 			}
-			deq.Insert(8, 5);
+			deq.Insert(index, 5);
 
-			Assert.AreEqual(8, deq.IndexOf(5));
+			Assert.AreEqual(index, deq.IndexOf(5));
 		}
 		[TestMethod]
 		public void RemoveAt_Null()
@@ -570,6 +572,22 @@ namespace DeqTests
 				fake.AddBack(null);
 			}
 			for (int i = 0; i < ImplicitInt * 4; i++)
+				Assert.AreEqual(fake[i], deq[i]);
+		}
+		[TestMethod]
+		public void AddBack_GetFront_Null()
+		{
+			for (int i = 0; i < ImplicitInt; i++)
+			{
+				deq.AddBack(null);
+				deq.AddBack(5);
+				deq.GetFront();
+
+				fake.AddBack(null);
+				fake.AddBack(5);
+				fake.GetFront();
+			}
+			for (int i = 0; i < ImplicitInt; i++)
 				Assert.AreEqual(fake[i], deq[i]);
 		}
 	}

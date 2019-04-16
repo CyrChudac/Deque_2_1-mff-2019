@@ -20,8 +20,8 @@ public interface IDeque<T> : IList<T>
 }
 public partial class Deque<T> : IDeque<T>
 {
-	public static int ImplicitSize => 4;
-	public Deque() : this(ImplicitSize * View<T>.Array<T>.Size) { }
+	public static int ImplicitSize => 4 * View<T>.Array<T>.Size;
+	public Deque() : this(ImplicitSize) { }
 	public Deque(int capacity) {
 		if (capacity < 0)
 			throw new ArgumentOutOfRangeException();
